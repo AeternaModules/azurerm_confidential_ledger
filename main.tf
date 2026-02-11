@@ -7,10 +7,13 @@ resource "azurerm_confidential_ledger" "confidential_ledgers" {
   resource_group_name = each.value.resource_group_name
   tags                = each.value.tags
 
-  azuread_based_service_principal {
-    ledger_role_name = each.value.azuread_based_service_principal.ledger_role_name
-    principal_id     = each.value.azuread_based_service_principal.principal_id
-    tenant_id        = each.value.azuread_based_service_principal.tenant_id
+  dynamic "azuread_based_service_principal" {
+    for_each = each.value.azuread_based_service_principal
+    content {
+      ledger_role_name = azuread_based_service_principal.value.ledger_role_name
+      principal_id     = azuread_based_service_principal.value.principal_id
+      tenant_id        = azuread_based_service_principal.value.tenant_id
+    }
   }
 
   dynamic "certificate_based_security_principal" {

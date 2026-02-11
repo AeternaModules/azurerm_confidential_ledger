@@ -23,15 +23,23 @@ EOT
     name                = string
     resource_group_name = string
     tags                = optional(map(string))
-    azuread_based_service_principal = object({
+    azuread_based_service_principal = list(object({
       ledger_role_name = string
       principal_id     = string
       tenant_id        = string
-    })
+    }))
     certificate_based_security_principal = optional(object({
       ledger_role_name = string
       pem_public_key   = string
     }))
   }))
+  validation {
+    condition = alltrue([
+      for k, v in var.confidential_ledgers : (
+        length(v.azuread_based_service_principal) >= 1
+      )
+    ])
+    error_message = "Each azuread_based_service_principal list must contain at least 1 items"
+  }
 }
 
