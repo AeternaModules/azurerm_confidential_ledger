@@ -1,3 +1,7 @@
+output "confidential_ledgers_id" {
+  description = "Map of id values across all confidential_ledgers, keyed the same as var.confidential_ledgers"
+  value       = { for k, v in azurerm_confidential_ledger.confidential_ledgers : k => v.id }
+}
 output "confidential_ledgers_azuread_based_service_principal" {
   description = "Map of azuread_based_service_principal values across all confidential_ledgers, keyed the same as var.confidential_ledgers"
   value       = { for k, v in azurerm_confidential_ledger.confidential_ledgers : k => v.azuread_based_service_principal }
