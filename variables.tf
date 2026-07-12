@@ -28,10 +28,10 @@ EOT
       principal_id     = string
       tenant_id        = string
     }))
-    certificate_based_security_principal = optional(object({
+    certificate_based_security_principal = optional(list(object({
       ledger_role_name = string
       pem_public_key   = string
-    }))
+    })))
   }))
   validation {
     condition = alltrue([
@@ -40,14 +40,6 @@ EOT
       )
     ])
     error_message = "Each azuread_based_service_principal list must contain at least 1 items"
-  }
-  validation {
-    condition = alltrue([
-      for k, v in var.confidential_ledgers : (
-        v.certificate_based_security_principal == null || (length(v.certificate_based_security_principal.pem_public_key) > 0)
-      )
-    ])
-    error_message = "must not be empty"
   }
   # --- Unconfirmed validation candidates, derived from azurerm_confidential_ledger's provider source ---
   # Not auto-enabled: either a bespoke provider validator we can't safely translate,
@@ -99,6 +91,9 @@ EOT
   #   message:   must be a valid UUID
   # path: certificate_based_security_principal.ledger_role_name
   #   source:    validation.StringInSlice value list is not a literal []string - likely a generated PossibleValuesFor*() helper; resolve separately
+  # path: certificate_based_security_principal.pem_public_key
+  #   condition: length(value) > 0
+  #   message:   must not be empty
   # path: tags
   #   condition: length(value) <= 50
   #   message:   [from tags.Validate: invalid when len(value) > 50]

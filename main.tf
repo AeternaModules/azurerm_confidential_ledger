@@ -17,7 +17,7 @@ resource "azurerm_confidential_ledger" "confidential_ledgers" {
   }
 
   dynamic "certificate_based_security_principal" {
-    for_each = each.value.certificate_based_security_principal != null ? [each.value.certificate_based_security_principal] : []
+    for_each = each.value.certificate_based_security_principal != null ? each.value.certificate_based_security_principal : []
     content {
       ledger_role_name = certificate_based_security_principal.value.ledger_role_name
       pem_public_key   = certificate_based_security_principal.value.pem_public_key
